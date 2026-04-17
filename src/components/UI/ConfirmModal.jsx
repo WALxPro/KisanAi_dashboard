@@ -42,7 +42,7 @@ const ConfirmModal = ({
         
         <button
           onClick={onClose}
-          className="absolute right-4 top-4 text-muted-foreground hover:text-foreground transition-colors"
+          className="cursor-pointer absolute right-4 top-4 text-muted-foreground hover:text-foreground transition-colors"
         >
           <X className="h-4 w-4" />
         </button>
@@ -81,7 +81,7 @@ const ConfirmModal = ({
                 onConfirm();
                 onClose();
               }}
-              className={`flex-1 rounded-lg px-4 py-2.5 text-sm font-semibold transition-all duration-200 hover:shadow-lg ${styles.button}`}
+              className={`cursor-pointer flex-1 rounded-lg px-4 py-2.5 text-sm font-semibold transition-all duration-200 hover:shadow-lg ${styles.button}`}
             >
               {confirmText}
             </button>

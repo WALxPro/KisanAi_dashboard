@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { auth } from "../config/firebase";
-import { createUserWithEmailAndPassword,sendPasswordResetEmail,signInWithEmailAndPassword } from "firebase/auth";
-import { get, post } from "../api/apiClient";
+import { createUserWithEmailAndPassword, sendPasswordResetEmail, signInWithEmailAndPassword, updatePassword, reauthenticateWithCredential, EmailAuthProvider, signOut } from "firebase/auth";
+import { get, post, put } from "../api/apiClient";
 import { useDispatch } from "react-redux";
 import { setUser } from "../store/slices/authSlice";
 
@@ -14,10 +14,15 @@ const useAuth = () => {
   const navigate = useNavigate();
   
   const sendOtpAPI = async (data) => {
+    console.log(data, "sendotp")
+        const backendData = {
+      name : data.name,
+      email : data.email,
+    };
   setError(null);
   setLoading(true);
   try {
-    const response = await post("admin/send-signup-otp", data);
+    const response = await post("admin/send-signup-otp", backendData);
     return response;
   } catch (err) {
     const message =
@@ -52,12 +57,21 @@ const VerifyOtp = async ({ email, otp }) => {
 };
 const signup = async (data) => {
   const {email,password} = data
+  
   setError(null);
   setLoading(true);
   try {
+
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     try {
-      const response = await post("admin/signup", data);
+        const backendData = {
+      name : data.name,
+      email : data.email,
+      profile_picture : data.profileUrl
+    };
+
+      const response = await post("admin/signup", backendData);
+      
       navigate("/");  
       console.log(response, "Signup success");
     } catch (err) {
@@ -93,10 +107,36 @@ const signup = async (data) => {
 const signin = async ({ email, password }) => {
   setError(null);
   setLoading(true);
+
   try {
-    await signInWithEmailAndPassword(auth, email, password);
+    // 1️⃣ Firebase login
+    const firebaseUser = await signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+
+    // 2️⃣ Backend login (validate user)
     const response = await get(`admin/login/${email}`);
+
+    if (!response?.user) {
+      throw new Error("Backend user not found");
+    }
+
     dispatch(setUser(response.user));
+
+    // 3️⃣ Notification (ONLY if login fully successful)
+    const payload = {
+      title: "Login Alert",
+      message: `${response.user.name} logged in successfully`,
+      type: "login",
+      user_id: response.user._id,
+      target_role:"admin"
+    };
+
+    await post(`notifications/create`, payload);
+
+    // 4️⃣ Navigate last step
     navigate("/dashboard");
 
   } catch (error) {
@@ -112,16 +152,15 @@ const signin = async ({ email, password }) => {
           setError("Invalid email");
           break;
         default:
-          setError("Login failed");
+          setError("Firebase login failed");
       }
     } else {
-      setError(error.response?.data?.detail || "Login failed");
+      setError(error.message || "Login failed");
     }
   } finally {
     setLoading(false);
   }
 };
-
 const handleSendResetEmail = async ({ email }) => {  // <- receive email from component
   setError(null);
   setLoading(true);
@@ -144,6 +183,60 @@ const handleSendResetEmail = async ({ email }) => {  // <- receive email from co
   }
 };
 
+const updateProfile = async (email, data) => {
+  setError(null);
+  setLoading(true);
+  try {
+    const response = await put(`admin/update/${encodeURIComponent(email)}`, data);
+    dispatch(setUser({ ...response.admin }));
+    return response;
+  } catch (err) {
+    const message = err?.response?.data?.detail || err.message || "Failed to update profile";
+    setError(message);
+    throw err;
+  } finally {
+    setLoading(false);
+  }
+};
+
+const updatePasswordFirebase = async ({ currentPassword, newPassword }) => {
+  setError(null);
+  setLoading(true);
+  try {
+    const user = auth.currentUser;
+    if (!user) throw new Error("No user logged in");
+
+    const credential = EmailAuthProvider.credential(user.email, currentPassword);
+    await reauthenticateWithCredential(user, credential);
+    await updatePassword(user, newPassword);
+    
+    return { message: "Password updated successfully" };
+  } catch (err) {
+    let message = "Failed to update password";
+    if (err.code === "auth/wrong-password") {
+      message = "Current password is incorrect";
+    } else if (err.code === "auth/weak-password") {
+      message = "New password is too weak";
+    } else {
+      message = err.message || message;
+    }
+    setError(message);
+    throw err;
+  } finally {
+    setLoading(false);
+  }
+};
+
+ const logoutUser = async () => {
+  try {
+    await signOut(auth);
+    console.log("User logged out successfully");
+  } catch (error) {
+    console.error("Logout failed:", error.message);
+    throw error;
+  }
+};
+
   return {
     loading,
     error,
@@ -151,7 +244,10 @@ const handleSendResetEmail = async ({ email }) => {  // <- receive email from co
     sendOtpAPI,
     VerifyOtp,
     signin,
-    handleSendResetEmail
+    handleSendResetEmail,
+    updateProfile,
+    updatePasswordFirebase,
+    logoutUser
   };
 };
 

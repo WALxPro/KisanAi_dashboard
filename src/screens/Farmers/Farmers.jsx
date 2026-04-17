@@ -1,153 +1,173 @@
-// import { useState } from "react";
-// import { Search, Eye, Ban, CheckCircle, X, Users, Mail, Phone, MapPin, Calendar, Shield, ShieldOff } from "lucide-react";
-// // import Button from "@/components/Button";
-// // import Input from "@/components/Input";
-// import { ConfirmModal } from "../../components";
+import { useEffect, useState } from "react";
 
-// const farmersData = [
-//   { id: 1, name: "Ahmad Khan", email: "ahmad@email.com", phone: "+92 300 1234567", location: "Lahore", status: "Active", crops: "Wheat, Rice", joined: "Jan 15, 2024", avatar: "AK", totalOrders: 24, totalSpent: "$3,200" },
-//   { id: 2, name: "Sara Ali", email: "sara@email.com", phone: "+92 301 2345678", location: "Faisalabad", status: "Active", crops: "Cotton, Sugarcane", joined: "Feb 20, 2024", avatar: "SA", totalOrders: 18, totalSpent: "$2,450" },
-//   { id: 3, name: "Bilal Ahmed", email: "bilal@email.com", phone: "+92 302 3456789", location: "Multan", status: "Blocked", crops: "Mango, Citrus", joined: "Mar 10, 2024", avatar: "BA", totalOrders: 7, totalSpent: "$980" },
-//   { id: 4, name: "Fatima Noor", email: "fatima@email.com", phone: "+92 303 4567890", location: "Karachi", status: "Active", crops: "Vegetables", joined: "Apr 5, 2024", avatar: "FN", totalOrders: 32, totalSpent: "$4,100" },
-//   { id: 5, name: "Usman Tariq", email: "usman@email.com", phone: "+92 304 5678901", location: "Islamabad", status: "Active", crops: "Wheat, Corn", joined: "May 12, 2024", avatar: "UT", totalOrders: 15, totalSpent: "$1,800" },
-//   { id: 6, name: "Ayesha Malik", email: "ayesha@email.com", phone: "+92 305 6789012", location: "Rawalpindi", status: "Active", crops: "Rice, Lentils", joined: "Jun 18, 2024", avatar: "AM", totalOrders: 21, totalSpent: "$2,750" },
-// ];
+import useFarmer from "../../hooks/useFarmer";
+import { ContentLoader, EmptyState, DashboardText, Searchbar, ConfirmModal } from "../../components";
+import FarmerTable from "../../components/UI/table/FarmerTable";
+import FarmerModal from "../../components/UI/modal/FarmerModal";
 
-// const Farmers = () => {
-//   const [search, setSearch] = useState("");
-//   const [farmers, setFarmers] = useState(farmersData);
-//   const [selectedFarmer, setSelectedFarmer] = useState(null);
-//   const [modalOpen, setModalOpen] = useState(false);
-//   const [confirmOpen, setConfirmOpen] = useState(false);
-//   const [confirmTarget, setConfirmTarget] = useState(null);
+const Farmers = () => {
+  const [farmers, setFarmers] = useState([]);
+  const [search, setSearch] = useState("");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedFarmer, setSelectedFarmer] = useState(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+const [selectedFarmerForBlock, setSelectedFarmerForBlock] = useState(null);
+  const filteredFarmer = farmers.filter((farmer) =>
+    farmer.fullname.toLowerCase().includes(search.toLowerCase()),
+  );
+  const { getFarmers, updateFarmer, loading, error } = useFarmer();
+  const handleRowClick = (farmer) => {
+    setSelectedFarmer(farmer);
+    setModalOpen(true);
+  };
+  const handleBlockClick = (farmer) => {
+  setSelectedFarmerForBlock(farmer);
+  setConfirmOpen(true);
+};
+const confirmBlockToggle = async () => {
+  if (!selectedFarmerForBlock) return;
 
-//   const filtered = farmers.filter(
-//     (f) => f.name.toLowerCase().includes(search.toLowerCase()) || f.email.toLowerCase().includes(search.toLowerCase())
-//   );
+  const farmer = selectedFarmerForBlock;
 
-//   const toggleBlock = (id) => {
-//     setFarmers((prev) => prev.map((f) => f.id === id ? { ...f, status: f.status === "Active" ? "Blocked" : "Active" } : f));
-//     if (selectedFarmer && selectedFarmer.id === id) {
-//       setSelectedFarmer({ ...selectedFarmer, status: selectedFarmer.status === "Active" ? "Blocked" : "Active" });
-//     }
-//   };
+  try {
+    await updateFarmer(farmer.email, {
+      isBlocked: !farmer.isBlocked,
+    });
 
-//   const askConfirmBlock = (farmer) => {
-//     setConfirmTarget(farmer);
-//     setConfirmOpen(true);
-//   };
+    setFarmers((prev) =>
+      prev.map((f) =>
+        f.email === farmer.email
+          ? { ...f, isBlocked: !f.isBlocked }
+          : f
+      )
+    );
 
-//   return (
-//     <div className="space-y-6">
-//       <div>
-//         <h1 className="text-2xl font-bold text-foreground">Farmers</h1>
-//         <p className="text-muted-foreground">Manage farmers registered from the mobile app.</p>
-//       </div>
+  } catch (err) {
+    console.error(err);
+  } finally {
+    setConfirmOpen(false);
+    setSelectedFarmerForBlock(null);
+  }
+};
+  const fetchFarmers = async () => {
+    try {
+      const data = await getFarmers();
+      setFarmers(data);
+    } catch (err) {
+      console.error("Failed to fetch farmers:", err);
+    }
+  };
 
-//       <div className="flex items-center gap-3">
-//         {/* <div className="relative max-w-sm flex-1">
-//           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-//           <Input placeholder="Search farmers..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-10" />
-//         </div> */}
-//         <div className="flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5">
-//           <Users2Icon className="h-4 w-4 text-primary" />
-//           <span className="text-sm font-semibold text-foreground">{farmers.length}</span>
-//           <span className="text-xs text-muted-foreground">Total</span>
-//         </div>
-//       </div>
+  useEffect(() => {
+    fetchFarmers();
+  }, []);
 
-//       {/* Table */}
-//       <div className="overflow-hidden rounded-2xl border border-border bg-card">
-//         <div className="overflow-x-auto">
-//           <table className="w-full">
-//             <thead>
-//               <tr className="border-b border-border bg-secondary/30">
-//                 <th className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">Farmer</th>
-//                 <th className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">Location</th>
-//                 <th className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">Status</th>
-//                 <th className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">Joined</th>
-//                 <th className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">Actions</th>
-//               </tr>
-//             </thead>
-//             <tbody>
-//               {filtered.map((farmer) => (
-//                 <tr key={farmer.id} className="border-b border-border/50 last:border-0 hover:bg-secondary/30 transition-colors">
-//                   <td className="px-5 py-3.5">
-//                     <div className="flex items-center gap-3">
-//                       <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-primary to-accent text-xs font-bold text-primary-foreground shadow-sm">
-//                         {farmer.avatar}
-//                       </div>
-//                       <div>
-//                         <p className="text-sm font-semibold text-foreground">{farmer.name}</p>
-//                         <p className="text-xs text-muted-foreground">{farmer.email}</p>
-//                       </div>
-//                     </div>
-//                   </td>
-//                   <td className="px-5 py-3.5">
-//                     <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-//                       <MapPin className="h-3.5 w-3.5" /> {farmer.location}
-//                     </div>
-//                   </td>
-//                   <td className="px-5 py-3.5">
-//                     <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold ${farmer.status === "Active" ? "bg-success/10 text-success" : "bg-destructive/10 text-destructive"}`}>
-//                       <span className={`h-1.5 w-1.5 rounded-full ${farmer.status === "Active" ? "bg-success" : "bg-destructive"}`} />
-//                       {farmer.status}
-//                     </span>
-//                   </td>
-//                   <td className="px-5 py-3.5 text-sm text-muted-foreground">{farmer.joined}</td>
-//                   <td className="px-5 py-3.5">
-//                     <div className="flex items-center gap-1">
-//                       <button onClick={() => { setSelectedFarmer(farmer); setModalOpen(true); }} className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-info/10 hover:text-info transition-colors" title="View">
-//                         <Eye className="h-4 w-4" />
-//                       </button>
-//                       <button onClick={() => askConfirmBlock(farmer)} className={`flex h-8 w-8 items-center justify-center rounded-lg transition-colors ${farmer.status === "Active" ? "text-muted-foreground hover:bg-destructive/10 hover:text-destructive" : "text-muted-foreground hover:bg-success/10 hover:text-success"}`} title={farmer.status === "Active" ? "Block" : "Unblock"}>
-//                         {farmer.status === "Active" ? <Ban className="h-4 w-4" /> : <CheckCircle className="h-4 w-4" />}
-//                       </button>
-//                     </div>
-//                   </td>
-//                 </tr>
-//               ))}
-//             </tbody>
-//           </table>
-//         </div>
-//       </div>
+  console.log(farmers);
 
-//       {/* Modal and ConfirmModal remain same, no TS types */}
-//       {modalOpen && selectedFarmer && (
-//         <>
-//           <div className="fixed inset-0 z-50 bg-foreground/40 backdrop-blur-sm" onClick={() => setModalOpen(false)} />
-//           <div className="fixed left-1/2 top-1/2 z-50 w-full max-w-lg -translate-x-1/2 -translate-y-1/2 animate-scale-in overflow-hidden rounded-2xl border border-border bg-card shadow-2xl">
-//             {/* Modal content omitted for brevity, exactly same as before, just remove TS types */}
-//           </div>
-//         </>
-//       )}
+  return (
+    <div className="space-y-6">
+      <DashboardText
+        text="Farmers"
+        para="Manage farmers registered from the mobile app."
+      />
+      <Searchbar
+        searchValue={search}
+        onSearchChange={setSearch}
+        ads={farmers}
 
-//       <ConfirmModal
-//         open={confirmOpen}
-//         onClose={() => setConfirmOpen(false)}
-//         onConfirm={() => { if (confirmTarget) toggleBlock(confirmTarget.id); }}
-//         title={confirmTarget?.status === "Active" ? "Block Farmer?" : "Unblock Farmer?"}
-//         message={confirmTarget?.status === "Active"
-//           ? `Are you sure you want to block ${confirmTarget?.name}? They won't be able to access the app.`
-//           : `Are you sure you want to unblock ${confirmTarget?.name}? They will regain full access.`
-//         }
-//         confirmText={confirmTarget?.status === "Active" ? "Yes, Block" : "Yes, Unblock"}
-//         variant={confirmTarget?.status === "Active" ? "danger" : "info"}
-//       />
-//     </div>
-//   );
-// };
+      />
 
-// // Simple icon component
-// const Users2Icon = ({ className }) => (
-//   <Users className={className} />
-// );
+      {loading ? (
+        <ContentLoader variant="table" count={6} columns={4} />
+      ) : filteredFarmer.length === 0 ? (
+        <EmptyState
+          title="No Farmers Found"
+          description="No farmers registered yet."
+        />
+      ) : (
+        <FarmerTable
+  farmers={filteredFarmer}
+  onRowClick={handleRowClick}
+  confirmBlockToggle={handleBlockClick}
+/>
+      )}
+      <FarmerModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
 
-// export default Farmers;
+        farmer={selectedFarmer}
+      />
 
- const Farmers =()=>{
+      <ConfirmModal
+  open={confirmOpen}
+  onClose={() => {
+    setConfirmOpen(false);
+    setSelectedFarmerForBlock(null);
+  }}
+  onConfirm={confirmBlockToggle}
+  title={
+    selectedFarmerForBlock?.isBlocked
+      ? "Unblock Farmer"
+      : "Block Farmer"
+  }
+  message={
+    selectedFarmerForBlock?.isBlocked
+      ? "Are you sure you want to unblock this farmer?"
+      : "Are you sure you want to block this farmer?"
+  }
+  confirmText="Yes, Continue"
+  cancelText="Cancel"
+  variant="danger"
+/>
+    </div>
+  );
+};
+
+export default Farmers;
+
+const FarmerQuerry = () => {
   return(
-    <h1>Farner</h1>
+      <>
+          <div className="fixed inset-0 z-50 bg-foreground/40 backdrop-blur-sm" onClick={() => setQueryFarmer(null)} />
+          <div className="fixed left-1/2 top-1/2 z-50 w-full max-w-lg -translate-x-1/2 -translate-y-1/2 animate-scale-in overflow-hidden rounded-2xl border border-border bg-card shadow-2xl">
+            <div className="flex items-center justify-between border-b border-border p-5">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-primary to-accent text-xs font-bold text-primary-foreground shadow-sm">{queryFarmer.avatar}</div>
+                <div>
+                  <h2 className="text-lg font-bold text-foreground">{queryFarmer.name}'s Queries</h2>
+                  <p className="text-xs text-muted-foreground">{queryFarmer.queries.length} total queries</p>
+                </div>
+              </div>
+              <button onClick={() => setQueryFarmer(null)} className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-secondary transition-colors"><X className="h-4 w-4" /></button>
+            </div>
+            <div className="max-h-[400px] overflow-y-auto p-5 space-y-3">
+              {queryFarmer.queries.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-10 text-center">
+                  <MessageSquareText className="h-12 w-12 text-muted-foreground/20 mb-3" />
+                  <p className="text-sm font-medium text-muted-foreground">No queries yet</p>
+                  <p className="text-xs text-muted-foreground/60">This farmer hasn't submitted any queries.</p>
+                </div>
+              ) : (
+                queryFarmer.queries.map((q) => (
+                  <div key={q.id} className="rounded-xl border border-border/50 bg-secondary/30 p-4 space-y-2 transition-colors hover:bg-secondary/50">
+                    <div className="flex items-start justify-between gap-3">
+                      <h3 className="text-sm font-semibold text-foreground">{q.subject}</h3>
+                      <span className={`shrink-0 inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${q.status === "Pending" ? "bg-warning/10 text-warning" : "bg-success/10 text-success"}`}>
+                        <span className={`h-1.5 w-1.5 rounded-full ${q.status === "Pending" ? "bg-warning" : "bg-success"}`} />{q.status}
+                      </span>
+                    </div>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{q.message}</p>
+                    <div className="flex items-center gap-1.5 text-xs text-muted-foreground/60">
+                      <Clock className="h-3 w-3" /> {q.date}
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+            <div className="border-t border-border p-4 flex justify-end">
+              <button onClick={() => setQueryFarmer(null)} className="rounded-lg border border-border bg-secondary/50 px-5 py-2 text-sm font-medium text-foreground hover:bg-secondary transition-colors">Close</button>
+            </div>
+          </div>
+        </>
   )
 }
-export default Farmers

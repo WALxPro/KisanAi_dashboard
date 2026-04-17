@@ -24,10 +24,12 @@ const Login = () => {
     try {
       const formData = getValues();
 
-      signin({
+     signin({
         email: formData.email,
         password: formData.password,
       });
+
+      
     } catch (e) {
       console.log(e);
     }

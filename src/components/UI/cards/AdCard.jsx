@@ -12,7 +12,7 @@ const AdCard = ({ ads, openEdit, setDeleteConfirm }) => {
             <img
               src={ad.image} // direct string
               alt={ad.title || "Ad Preview"}
-              className="h-full w-full bg-center bg-cover "
+              className="h-full w-full object-cover  "
             />
 
             <span

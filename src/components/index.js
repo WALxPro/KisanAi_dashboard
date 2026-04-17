@@ -19,6 +19,11 @@ import EmptyState from "./UI/EmptyState";
 import AdsModal from "./UI/modal/AdsModal";
 import  AdCard  from "./UI/cards/AdCard"
 import AdTable from "./UI/table/Adtable";
+import BlogsModal from "./UI/modal/BlogModal";
+import BlogCard from "./UI/cards/BlogCard";
+import BlogTable from "./UI/table/BlogTable";
+import TutorialCard from "./UI/cards/TutorialCard";
+import TutorialModal from "./UI/modal/TutorialModal";
 export {
   DashboardLayout,
   InputField,
@@ -40,5 +45,10 @@ export {
   EmptyState,
   AdsModal,
   AdCard,
-  AdTable
+  AdTable,
+  BlogsModal,
+  BlogCard,
+  BlogTable,
+  TutorialCard,
+  TutorialModal
 };

@@ -1,33 +1,75 @@
 import { useRef, useState } from "react";
-import { Camera } from "lucide-react";
+import { Camera, Video } from "lucide-react";
 
-const ImageUpload = ({ label = "Upload Image", image, setImage, placeholderText = "Upload photo", changeText = "Change photo" }) => {
+const MediaUpload = ({
+  label = "Upload",
+  file,
+  setFile,
+  type = "image", // "image" | "video"
+  placeholderText = "Upload file",
+  changeText = "Change file",
+}) => {
   const fileInputRef = useRef(null);
   const [preview, setPreview] = useState(null);
 
   const handleFileChange = (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const selectedFile = e.target.files?.[0];
+    if (!selectedFile) return;
 
-    setImage(file); // ✅ File object
-    setPreview(URL.createObjectURL(file)); // ✅ Preview
+    setFile(selectedFile);
+
+    // Preview logic
+    if (type === "image") {
+      setPreview(URL.createObjectURL(selectedFile));
+    } else if (type === "video") {
+      setPreview(URL.createObjectURL(selectedFile));
+    }
   };
 
   return (
     <div className="space-y-2">
-      <label className="text-sm  text-input/80">{label}</label>
+      <label className="text-sm text-input/80">{label}</label>
+
       <div
-        className="w-full h-12 flex items-center gap-3 cursor-pointer rounded-lg px-4 border-input/20  text-input  bg-input/10"
+        className="w-full h-14 flex items-center gap-3 cursor-pointer rounded-lg px-4 border-input/20 text-input bg-input/10"
         onClick={() => fileInputRef.current?.click()}
       >
-        <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center">
-          {preview ? <img src={preview} className="w-full h-full object-cover" /> : <Camera size={16} />}
+        <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center bg-black/20">
+          {preview ? (
+            type === "image" ? (
+              <img src={preview} className="w-full h-full object-cover" />
+            ) : (
+              <Video size={18} />
+            )
+          ) : type === "image" ? (
+            <Camera size={16} />
+          ) : (
+            <Video size={16} />
+          )}
         </div>
+
         <span>{preview ? changeText : placeholderText}</span>
       </div>
-      <input type="file" accept="image/*" hidden ref={fileInputRef} onChange={handleFileChange} className="border-input/20  text-input  bg-input/10"/>
+
+      {/* Hidden input */}
+      <input
+        type="file"
+        accept={type === "image" ? "image/*" : "video/*"}
+        hidden
+        ref={fileInputRef}
+        onChange={handleFileChange}
+      />
+
+      {/* 🎥 Video Preview */}
+      {type === "video" && preview && (
+        <video
+          src={preview}
+          controls
+          className="w-full mt-2 rounded-lg"
+        />
+      )}
     </div>
   );
 };
 
-export default ImageUpload;
+export default MediaUpload;

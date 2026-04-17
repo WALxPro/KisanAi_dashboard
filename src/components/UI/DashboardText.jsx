@@ -16,7 +16,7 @@ const DashboardText = ({ text, para, openAdd }) => {
           onClick={openAdd}
           className="flex items-center gap-2 px-5 py-2.5"
         >
-          <Plus className="h-4 w-4" /> Add New Ad
+          <Plus className="h-4 w-4" /> Add New 
         </Button>
       )}
     </div>

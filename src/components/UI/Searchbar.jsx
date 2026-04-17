@@ -8,6 +8,8 @@ const Searchbar = ({
   activeTab,
   onTabChange,
   ads = [],
+  action1,
+  action2,
 }) => {
   return (
     <div className="flex items-center gap-3 flex-wrap">
@@ -26,10 +28,10 @@ const Searchbar = ({
       {ads.length > 0 && (
         <>
           <span className="flex items-center gap-1.5 rounded-full bg-success/10 px-3 py-1 text-xs font-semibold text-success">
-            {ads.filter((a) => a.status === "Active").length} Active
+            {action1}
           </span>
           <span className="flex items-center gap-1.5 rounded-full bg-muted px-3 py-1 text-xs font-semibold text-muted-foreground">
-            {ads.filter((a) => a.status === "Inactive").length} Inactive
+            {action2}
           </span>
         </>
       )}

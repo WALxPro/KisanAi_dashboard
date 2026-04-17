@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Image, LayoutGrid, List, Plus, Search } from "lucide-react";
 import { adSchema } from "../../services/validation/adSchema";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -15,7 +14,7 @@ import {
   EmptyState,
   Searchbar,
 } from "../../components";
-import Input from "../../components/UI/Input";
+
 
 const AdsManagement = () => {
   const [search, setSearch] = useState("");
@@ -28,7 +27,10 @@ const AdsManagement = () => {
     ad.title.toLowerCase().includes(search.toLowerCase()),
   );
   const { loading, error, CreateAds, getAds, updateAd, deleteAd } = useAds();
-
+  const active = ads.filter((a) => a.status === "Active").length;
+  const inactive = ads.filter((a) => a.status === "Inactive").length;
+  const action1 = `${active} Active`;
+  const action2 = `${inactive} Inactive`;
   const {
     register,
     handleSubmit,
@@ -125,11 +127,13 @@ const AdsManagement = () => {
         activeTab={activeTab}
         onTabChange={handleTabChange}
         ads={ads}
+        action1={action1}
+        action2={action2}
       />
       {activeTab === "cards" ? (
         loading ? (
           <ContentLoader variant="cards" count={6} />
-        ) : ads.length === 0 ? (
+        ) : filteredAds.length === 0 ? (
           <EmptyState
             title="No Ads Found"
             description="Create your first advertisement to get started."
@@ -144,7 +148,7 @@ const AdsManagement = () => {
         )
       ) : loading ? (
         <ContentLoader variant="table" count={6} columns={4} />
-      ) : ads.length === 0 ? (
+      ) : filteredAds.length === 0 ? (
         <EmptyState
           title="No Ads Found"
           description="Create your first advertisement to get started."

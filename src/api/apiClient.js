@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const baseUrl = import.meta.env.VITE_API_URL;
+// const baseUrl = import.meta.env.VITE_API_URL;
+const baseUrl = "http://127.0.0.1:8000";
 if (!baseUrl) throw new Error("VITE_API_URL not defined!");
 
 // Common error handler

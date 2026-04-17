@@ -48,6 +48,8 @@ const Register = () => {
       if (profilePic) {
         profileUrl = await uploadToCloudinary(profilePic);
       }
+
+      
       await signup({
         ...formData,
         profile_picture: profileUrl,

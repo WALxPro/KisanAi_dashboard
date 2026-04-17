@@ -1,74 +1,112 @@
-import { Bell, ChevronDown, LogOut, User, Menu, Search } from "lucide-react";
-import { useSelector } from "react-redux";
+import {
+  Bell,
+  ChevronDown,
+  LogOut,
+  User,
+  Menu,
+} from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
+import { useState } from "react";
+import useAuth from "../../hooks/useAuth";
+import { logout } from "../../store/slices/authSlice";
+import Notification from "../UI/Notification";
 
-const Topbar = ({ setMobileOpen, profileOpen, setProfileOpen, handleNav }) => {
+
+const Topbar = ({
+  setMobileOpen,
+  profileOpen,
+  setProfileOpen,
+  handleNav,
+}) => {
+  const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
-  console.log(user);
+  const { logoutUser } = useAuth();
+
+  const [notifOpen, setNotifOpen] = useState(false);
+
+  const logOut = async () => {
+    try {
+      await logoutUser();
+      dispatch(logout());
+      handleNav("/");
+      setProfileOpen(false);
+    } catch (e) {
+      console.log(e, "Logout Error");
+    }
+  };
 
   return (
-    <header className="flex h-[72px] items-center justify-between border-b border-border bg-card/80 backdrop-blur-xl px-4 lg:px-6">
+    <header className="relative z-[9] flex h-[72px] items-center justify-between border-b border-border bg-card/80 backdrop-blur-xl px-4 lg:px-6">
+
+      {/* LEFT */}
       <div className="flex items-center gap-4">
         <button
           onClick={() => setMobileOpen(true)}
-          className="text-muted-foreground lg:hidden cursor-pointer"
+          className="text-muted-foreground lg:hidden"
         >
           <Menu className="h-6 w-6" />
         </button>
       </div>
 
+      {/* RIGHT */}
       <div className="flex items-center gap-2">
-        <button className="relative flex h-10 w-10 items-center justify-center rounded-xl text-muted-foreground hover:bg-secondary hover:text-foreground transition-all">
-          <Bell className="h-5 w-5" />
-          <span className="absolute right-2 top-2 flex h-2 w-2">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-destructive opacity-75" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-destructive" />
-          </span>
-        </button>
 
-        <div className="mx-2 hidden h-8 w-px bg-border md:block cursor-pointer" />
-        <div className="relative cursor-pointer">
+        {/* NOTIFICATION */}
+        <div className="relative">
+          <button
+            onClick={() => setNotifOpen(!notifOpen)}
+            className="relative flex h-10 w-10 items-center justify-center rounded-xl hover:bg-secondary transition-all"
+          >
+            <Bell className="h-5 w-5 text-muted-foreground" />
+          </button>
+
+          {notifOpen && (
+            <Notification setNotifOpen={setNotifOpen} />
+          )}
+        </div>
+
+        {/* PROFILE */}
+        <div className="relative inline-block">
+
           <button
             onClick={() => setProfileOpen(!profileOpen)}
-            className="flex items-center gap-3 rounded-xl p-1.5 hover:bg-secondary transition-all cursor-pointer"
+            className="flex items-center gap-3 rounded-xl p-1.5 hover:bg-secondary transition-all"
           >
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl gradient-primary shadow-sm overflow-hidden">
-              {user.profile_picture ? (
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl overflow-hidden">
+              {user?.profile_picture ? (
                 <img
                   src={user.profile_picture}
-                  alt="Profile"
-                  className="h-full w-full object-cover rounded-xl"
+                  className="h-full w-full object-cover"
                 />
               ) : (
-                <User className="h-4 w-4 text-primary-foreground" />
+                <User className="h-4 w-4" />
               )}
             </div>
 
-            <div className="hidden text-left md:block">
-              <p className="text-sm font-semibold text-foreground leading-tight">
-                {user.name}
+            <div className="hidden md:block text-left">
+              <p className="text-sm font-semibold">{user?.name}</p>
+              <p className="text-xs text-muted-foreground">
+                Administrator
               </p>
-              <p className="text-xs text-muted-foreground">Administrator</p>
             </div>
 
-            <ChevronDown
-              className={`hidden h-4 w-4 text-muted-foreground transition-transform md:block ${
-                profileOpen ? "rotate-180" : ""
-              }`}
-            />
+            <ChevronDown className="hidden md:block h-4 w-4" />
           </button>
 
           {profileOpen && (
             <>
               <div
-                className="fixed inset-0 z-[9999999]"
+                className="fixed inset-0 z-[9998]"
                 onClick={() => setProfileOpen(false)}
               />
-              <div className="absolute right-0 top-14 z-50 w-56 animate-fade-in rounded-xl border border-border bg-card p-2 shadow-xl">
-                <div className="mb-2 rounded-lg bg-secondary/50 p-3">
-                  <p className="text-sm font-semibold text-foreground">
-                    {user.name}
+
+              <div className="absolute right-0 top-14 z-[10000] w-56 rounded-xl border-border bg-card shadow-xl p-2">
+
+                <div className="p-3 border-b border-border">
+                  <p className="font-semibold">{user?.name}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {user?.email}
                   </p>
-                  <p className="text-xs text-muted-foreground">{user.email}</p>
                 </div>
 
                 <button
@@ -76,31 +114,30 @@ const Topbar = ({ setMobileOpen, profileOpen, setProfileOpen, handleNav }) => {
                     handleNav("/dashboard/settings");
                     setProfileOpen(false);
                   }}
-                  className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-foreground hover:bg-secondary transition-colors"
+                  className="w-full text-left px-3 py-2 hover:bg-secondary rounded-lg"
                 >
-                  <User className="h-4 w-4 text-muted-foreground" />
+                  <User className="inline h-4 w-4 mr-2" />
                   Profile Settings
                 </button>
 
-                <div className="my-1 h-px bg-border" />
-
                 <button
-                  onClick={() => {
-                    handleNav("/");
-                    setProfileOpen(false);
-                  }}
-                  className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-destructive hover:bg-destructive/5 transition-colors"
+                  onClick={logOut}
+                  className="w-full text-left px-3 py-2 hover:bg-red-50 text-red-500 rounded-lg"
                 >
-                  <LogOut className="h-4 w-4" />
+                  <LogOut className="inline h-4 w-4 mr-2" />
                   Logout
                 </button>
+
               </div>
             </>
           )}
         </div>
+
       </div>
     </header>
   );
 };
 
 export default Topbar;
+
+
