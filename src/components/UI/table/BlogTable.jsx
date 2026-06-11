@@ -39,13 +39,19 @@ const BlogTable = ({ blogs, openEdit, setDeleteConfirm }) => {
                   <td className="px-5 py-3.5 text-sm font-semibold text-foreground">
                     {blog.author}
                   </td>
+
                   <td className="px-5 py-3.5">
                     <span
-                      className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold ${blog.status === "Active" ? "bg-success/10 text-success" : "bg-muted text-muted-foreground"}`}
+                      className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold ${blog.status === "Draft"
+                        ? "bg-warning/10 text-warning "
+                        : "bg-success/10 text-success"
+                        }`}
                     >
                       <span
-                        className={`h-1.5 w-1.5 rounded-full ${blog.status === "Active" ? "bg-success" : "bg-muted-foreground"}`}
+                        className={`h-1.5 w-1.5 rounded-full ${blog.status === "Draft" ? "bg-warning" : "bg-success"
+                          }`}
                       />
+
                       {blog.status}
                     </span>
                   </td>
@@ -58,7 +64,7 @@ const BlogTable = ({ blogs, openEdit, setDeleteConfirm }) => {
                     <div className="flex gap-1">
                       <button
                         onClick={() => openEdit(blog)}
-                        className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-info/10 hover:text-info transition-colors"
+                        className="cursor-pointer flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-info/10 hover:text-info transition-colors"
                       >
                         <Pencil className="h-4 w-4" />
                       </button>
@@ -66,7 +72,7 @@ const BlogTable = ({ blogs, openEdit, setDeleteConfirm }) => {
                         onClick={() =>
                           setDeleteConfirm({ open: true, id: blog._id })
                         }
-                        className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
+                        className="cursor-pointer flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>

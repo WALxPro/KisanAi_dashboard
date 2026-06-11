@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { get, put } from "../api/apiClient";
+import { get, put, post } from "../api/apiClient";
 
 const useFarmer = () => {
   const [loading, setLoading] = useState(false);
@@ -36,7 +36,35 @@ const useFarmer = () => {
       }
     };
 
-    const farmerComplain = async () =>{
+  const blockFarmer = async (email) => {
+    setError(null);
+    setLoading(true);
+    try {
+      const response = await post("admin/farmers/block", { email });
+      return response;
+    } catch (err) {
+      setError(err.response?.data?.detail || "Failed to block farmer");
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const unblockFarmer = async (email) => {
+    setError(null);
+    setLoading(true);
+    try {
+      const response = await post("admin/farmers/unblock", { email });
+      return response;
+    } catch (err) {
+      setError(err.response?.data?.detail || "Failed to unblock farmer");
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const farmerComplain = async () =>{
         setError(null);
       setLoading(true);
       try {
@@ -54,6 +82,8 @@ const useFarmer = () => {
     error,
     getFarmers,
     updateFarmer,
+    blockFarmer,
+    unblockFarmer,
   };
 };
 

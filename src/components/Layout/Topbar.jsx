@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
 import useAuth from "../../hooks/useAuth";
 import { logout } from "../../store/slices/authSlice";
-import Notification from "../UI/Notification";
+
 
 
 const Topbar = ({
@@ -22,7 +22,6 @@ const Topbar = ({
   const user = useSelector((state) => state.auth.user);
   const { logoutUser } = useAuth();
 
-  const [notifOpen, setNotifOpen] = useState(false);
 
   const logOut = async () => {
     try {
@@ -51,19 +50,7 @@ const Topbar = ({
       {/* RIGHT */}
       <div className="flex items-center gap-2">
 
-        {/* NOTIFICATION */}
-        <div className="relative">
-          <button
-            onClick={() => setNotifOpen(!notifOpen)}
-            className="relative flex h-10 w-10 items-center justify-center rounded-xl hover:bg-secondary transition-all"
-          >
-            <Bell className="h-5 w-5 text-muted-foreground" />
-          </button>
-
-          {notifOpen && (
-            <Notification setNotifOpen={setNotifOpen} />
-          )}
-        </div>
+        
 
         {/* PROFILE */}
         <div className="relative inline-block">
@@ -83,7 +70,7 @@ const Topbar = ({
               )}
             </div>
 
-            <div className="hidden md:block text-left">
+            <div className="hidden md:block text-left cursor-pointer">
               <p className="text-sm font-semibold">{user?.name}</p>
               <p className="text-xs text-muted-foreground">
                 Administrator
@@ -96,7 +83,7 @@ const Topbar = ({
           {profileOpen && (
             <>
               <div
-                className="fixed inset-0 z-[9998]"
+                className="fixed inset-0 z-[9998] cursor-pointer"
                 onClick={() => setProfileOpen(false)}
               />
 

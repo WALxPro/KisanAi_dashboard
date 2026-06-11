@@ -125,16 +125,6 @@ const signin = async ({ email, password }) => {
 
     dispatch(setUser(response.user));
 
-    // 3️⃣ Notification (ONLY if login fully successful)
-    const payload = {
-      title: "Login Alert",
-      message: `${response.user.name} logged in successfully`,
-      type: "login",
-      user_id: response.user._id,
-      target_role:"admin"
-    };
-
-    await post(`notifications/create`, payload);
 
     // 4️⃣ Navigate last step
     navigate("/dashboard");

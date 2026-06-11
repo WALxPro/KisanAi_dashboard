@@ -1,8 +1,33 @@
-import { Pencil, Trash2, MessageSquareText, User, Eye, Ban } from "lucide-react";
+import {
+  Pencil,
+  Trash2,
+  MessageSquareText,
+  User,
+  Eye,
+  Ban,
+} from "lucide-react";
+import { useEffect, useState } from "react";
+import { get } from "../../../api/apiClient";
 
-const FarmerTable = ({ farmers, onRowClick, confirmBlockToggle }) => {
-  console.log(farmers, "table");
+const FarmerTable = ({
+  farmers,
+  onRowClick,
+  confirmBlockToggle,
+  onComplaintClick,
+}) => {
+  const [complaintCounts, setComplaintCounts] = useState({});
+  useEffect(() => {
+    const fetchCounts = async () => {
+      try {
+        const data = await get("complain/admin/counts");
+        setComplaintCounts(data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
 
+    fetchCounts();
+  }, []);
   return (
     <>
       <div className="overflow-hidden rounded-2xl border border-border bg-card">
@@ -48,33 +73,35 @@ const FarmerTable = ({ farmers, onRowClick, confirmBlockToggle }) => {
                       ) : (
                         <User className="h-4 w-4 text-primary-foreground" />
                       )}
-                    </div> <p>{farmer.fullname}</p>
+                    </div>{" "}
+                    <p>{farmer.fullname}</p>
                   </td>
                   <td className="px-5 py-3.5 text-sm font-semibold text-foreground">
-                    {farmer.cropDetail.city}
+                    {/* {farmer.cropDetail.city} */}karachi
                   </td>
                   <td className="px-5 py-3.5">
                     <span
-                      className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold ${farmer.isBlocked
-                        ? "bg-destructive/10 text-destructive"
-                        : "bg-success/10 text-success"
-                        }`}
+                      className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold ${
+                        farmer.isBlocked
+                          ? "bg-destructive/10 text-destructive"
+                          : "bg-success/10 text-success"
+                      }`}
                     >
                       <span
-                        className={`h-1.5 w-1.5 rounded-full ${farmer.isBlocked ? "bg-destructive" : "bg-success"
-                          }`}
+                        className={`h-1.5 w-1.5 rounded-full ${
+                          farmer.isBlocked ? "bg-destructive" : "bg-success"
+                        }`}
                       />
 
-                      {farmer.isBlocked ? "Blocked" : "unBlock"}
+                      {farmer.isBlocked ? "Blocked" : "Active"}
                     </span>
                   </td>
                   <td className="px-5 py-3.5 text-sm text-muted-foreground">
-                    {farmer.cropDetail.cropName}
+                    {/* {farmer.cropDetail.cropName} */} wheat
                   </td>
                   <td className="px-5 py-3.5 text-sm text-muted-foreground">
                     {new Date(farmer.createdAt).toLocaleDateString()}
                   </td>
-
 
                   <td className="px-5 py-3.5">
                     <div className="flex gap-1">
@@ -85,12 +112,16 @@ const FarmerTable = ({ farmers, onRowClick, confirmBlockToggle }) => {
                         <Eye className="h-4 w-4" />
                       </button>
                       <button
-                        // onClick={() =>
-                        //   setDeleteConfirm({ open: true, id: farmer._id })
-                        // }
-                        className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-success/10 hover:text-success transition-colors cursor-pointer"
+                        onClick={() => onComplaintClick(farmer)}
+                        className="relative flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-success/10 hover:text-success transition-colors cursor-pointer"
                       >
                         <MessageSquareText className="h-4 w-4" />
+
+                        {(complaintCounts[farmer._id] || 0) > 0 && (
+                          <span className="absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
+                            {complaintCounts[farmer._id]}
+                          </span>
+                        )}
                       </button>
                       <button
                         onClick={() => confirmBlockToggle(farmer)}
@@ -98,7 +129,6 @@ const FarmerTable = ({ farmers, onRowClick, confirmBlockToggle }) => {
                       >
                         <Ban className="h-4 w-4" />
                       </button>
-
                     </div>
                   </td>
                 </tr>

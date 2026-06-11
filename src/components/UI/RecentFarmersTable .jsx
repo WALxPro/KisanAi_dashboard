@@ -1,6 +1,15 @@
-import { Table, TableHead, TableBody, TableRow, TableHeaderCell, TableCell } from "./Table";
+import {
+  Table,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableHeaderCell,
+  TableCell,
+} from "./Table";
 
 const RecentFarmersTable = ({ data }) => {
+  console.log(data.createdAt);
+  console.log(data, "recent farmers");
   return (
     <Table>
       <TableHead>
@@ -15,12 +24,23 @@ const RecentFarmersTable = ({ data }) => {
           <TableRow key={farmer.email}>
             <TableCell>
               <div className="flex items-center gap-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-primary to-accent text-xs font-bold text-primary-foreground">
-                  {farmer.avatar}
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl overflow-hidden">
+                  {farmer?.profilePicture ? (
+                    <img
+                      src={farmer.profilePicture}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <User className="h-4 w-4" />
+                  )}
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-foreground">{farmer.name}</p>
-                  <p className="text-xs text-muted-foreground">{farmer.email}</p>
+                  <p className="text-sm font-medium text-foreground">
+                    {farmer.fullname}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {farmer.email}
+                  </p>
                 </div>
               </div>
             </TableCell>
@@ -29,20 +49,23 @@ const RecentFarmersTable = ({ data }) => {
 
             <TableCell>
               <span
-                className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ${
-                  farmer.status === "Active" ? "bg-success/10 text-success" : "bg-destructive/10 text-destructive"
+                className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold ${
+                  farmer.isBlocked
+                    ? "bg-destructive/10 text-destructive"
+                    : "bg-success/10 text-success"
                 }`}
               >
                 <span
                   className={`h-1.5 w-1.5 rounded-full ${
-                    farmer.status === "Active" ? "bg-success" : "bg-destructive"
+                    farmer.isBlocked ? "bg-destructive" : "bg-success"
                   }`}
                 />
-                {farmer.status}
+
+                {farmer.isBlocked ? "Blocked" : "Active"}
               </span>
             </TableCell>
 
-            <TableCell>{farmer.joined}</TableCell>
+            <TableCell>{farmer.createdAt?.split("T")[0]}</TableCell>
           </TableRow>
         ))}
       </TableBody>
@@ -50,4 +73,4 @@ const RecentFarmersTable = ({ data }) => {
   );
 };
 
-export default RecentFarmersTable
+export default RecentFarmersTable;

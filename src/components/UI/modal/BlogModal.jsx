@@ -23,6 +23,7 @@ const BlogModal = ({
   watch,
   loading,
   backendError,
+
 }) => {
   const [previewLoading, setPreviewLoading] = useState(false);
   const [fileError, setFileError] = useState("");
@@ -109,7 +110,7 @@ const BlogModal = ({
                 <label className="block text-sm text-input/80 pb-2">Category</label>
                 <select
                   {...register("category")}
-                  className="border-input/20 text-input bg-input/10 w-full rounded-lg border px-4 py-3"
+                  className="border-input/20 text-input bg-input/10 w-full rounded-lg border px-4 py-3 cursor-pointer"
                 >
                   <option className="text-foreground" value="Select">Select category</option>
                   {categories.map((cat, index) => (
@@ -148,7 +149,7 @@ const BlogModal = ({
               <button
                 type="button"
                 onClick={toggleStatus}
-                className={`relative h-6 w-11 rounded-full transition-colors ${
+                className={`relative h-6 w-11 rounded-full transition-colors cursor-pointer ${
                   status === "Published" ? "bg-accent" : "bg-white/20"
                 }`}
               >
@@ -243,7 +244,7 @@ const BlogModal = ({
           <button
             type="button"
             onClick={() => setFormOpen(false)}
-            className="rounded-lg border border-white/15 bg-transparent px-5 py-2.5 text-sm font-medium text-white/70 hover:bg-white/5 transition-colors"
+            className="cursor-pointer rounded-lg border border-white/15 bg-transparent px-5 py-2.5 text-sm font-medium text-white/70 hover:bg-white/5 transition-colors"
           >
             Cancel
           </button>
@@ -251,7 +252,7 @@ const BlogModal = ({
             type="button"
             onClick={handleSubmit(handleSave)}
             disabled={loading}
-            className="bg-accent disabled:opacity-60 flex items-center gap-2 text-white rounded-lg px-5 py-2.5 text-sm font-semibold shadow-lg transition-all hover:bg-accent/90"
+            className="cursor-pointer bg-accent disabled:opacity-60 flex items-center gap-2 text-white rounded-lg px-5 py-2.5 text-sm font-semibold shadow-lg transition-all hover:bg-accent/90"
           >
             {loading && <Loader2 className="h-4 w-4 animate-spin" />}
             {loading

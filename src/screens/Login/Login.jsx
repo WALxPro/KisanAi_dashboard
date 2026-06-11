@@ -74,7 +74,7 @@ const Login = () => {
               placeholder="••••••••"
               Icon={Lock}
               psd
-              fsd
+              
               register={register("password")}
               error={errors.password?.message}
             />

@@ -1,5 +1,14 @@
 import { useState } from "react";
-import { User, Mail, Save, Camera, Shield, Key } from "lucide-react";
+import {
+  User,
+  Mail,
+  Save,
+  Camera,
+  Shield,
+  Key,
+  Eye,
+  EyeOff,
+} from "lucide-react";
 import Input from "../../components/UI/Input";
 import Button from "../../components/UI/Button";
 import ConfirmModal from "../../components/UI/ConfirmModal";
@@ -7,7 +16,10 @@ import { DashboardText } from "../../components";
 import { useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { profileSchema, passwordSchema } from "../../services/validation/profileSchema";
+import {
+  profileSchema,
+  passwordSchema,
+} from "../../services/validation/profileSchema";
 import useAuth from "../../hooks/useAuth";
 import { uploadToCloudinary } from "../../services/Cloudnairy/uploadImage";
 
@@ -254,7 +266,9 @@ const ProfileSetting = ({
           </label>
           <Input {...register("fullName")} placeholder="Enter full name" />
           {errors.fullName && (
-            <p className="mt-1 text-red-500 text-sm">{errors.fullName.message}</p>
+            <p className="mt-1 text-red-500 text-sm">
+              {errors.fullName.message}
+            </p>
           )}
         </div>
 
@@ -300,6 +314,10 @@ const PasswordSetting = ({
   loading,
   passwordSaved,
 }) => {
+  const [showCurrent, setShowCurrent] = useState(false);
+const [showNew, setShowNew] = useState(false);
+const [showConfirm, setShowConfirm] = useState(false);
+
   return (
     <div className="rounded-2xl border border-border bg-card p-6">
       <div className="flex items-center gap-3 mb-5">
@@ -317,11 +335,21 @@ const PasswordSetting = ({
           <label className="mb-1.5 block text-sm font-medium text-foreground">
             Current Password
           </label>
-          <Input
-            type="password"
-            {...register("currentPassword")}
-            placeholder="••••••••"
-          />
+          <div className="relative">
+            <Input
+              type={showCurrent ? "text" : "password"}
+              {...register("currentPassword")}
+              placeholder="••••••••"
+            />
+
+            <button
+              type="button"
+              onClick={() => setShowCurrent(!showCurrent)}
+              className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer"
+            >
+              {showCurrent ? <Eye size={18} /> : <EyeOff size={18} />}
+            </button>
+          </div>
           {errors.currentPassword && (
             <p className="mt-1 text-red-500 text-sm">
               {errors.currentPassword.message}
@@ -334,11 +362,20 @@ const PasswordSetting = ({
             <label className="mb-1.5 block text-sm font-medium text-foreground">
               New Password
             </label>
+            <div className="relative">
             <Input
-              type="password"
+              type={showNew ? "text" : "password"}
               {...register("newPassword")}
               placeholder="••••••••"
             />
+            <button
+              type="button"
+               onClick={() => setShowNew(!showNew)}
+              className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer"
+            >
+              {showNew ? <Eye size={18} /> : <EyeOff size={18} />}
+            </button>
+            </div>
             {errors.newPassword && (
               <p className="mt-1 text-red-500 text-sm">
                 {errors.newPassword.message}
@@ -350,11 +387,20 @@ const PasswordSetting = ({
             <label className="mb-1.5 block text-sm font-medium text-foreground">
               Confirm Password
             </label>
+            <div className="relative">
             <Input
-              type="password"
+              type={showConfirm ? "text" : "password"}
               {...register("confirmPassword")}
               placeholder="••••••••"
             />
+            <button
+              type="button"
+              onClick={() => setShowConfirm(!showConfirm)}
+              className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer"
+            >
+              {showConfirm ? <Eye size={18} /> : <EyeOff size={18} />}
+            </button>
+            </div>
             {errors.confirmPassword && (
               <p className="mt-1 text-red-500 text-sm">
                 {errors.confirmPassword.message}

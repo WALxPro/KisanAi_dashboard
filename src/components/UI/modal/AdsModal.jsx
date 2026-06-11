@@ -31,7 +31,7 @@ const AdsModal = ({
   return (
     <>
       <div
-        className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
+        className="fixed top-0 left-0 z-50 w-full h-screen bg-black/60 backdrop-blur-sm"
         onClick={() => setFormOpen(false)}
       />
 
@@ -78,7 +78,7 @@ const AdsModal = ({
               <button
                 type="button"
                 onClick={toggleStatus}
-                className={`relative h-6 w-11 rounded-full transition-colors ${
+                className={`relative h-6 w-11 rounded-full transition-colors cursor-pointer ${
                   status === "Active" ? "bg-accent" : "bg-white/20"
                 }`}
               >

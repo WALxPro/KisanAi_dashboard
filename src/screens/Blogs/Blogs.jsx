@@ -138,9 +138,7 @@ const Blogs = () => {
         onSearchChange={setSearch}
         activeTab={activeTab}
         onTabChange={handleTabChange}
-        ads={blogs}
-        action1={action1}
-        action2={action2}
+
       />
       {activeTab === "cards" ? (
         loading ? (
@@ -185,6 +183,7 @@ const Blogs = () => {
           setValue={setValue}
           watch={watch}
           backendError={error}
+          loading={loading}
         />
       )}
 

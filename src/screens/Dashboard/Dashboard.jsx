@@ -1,11 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  Users,
-  Megaphone,
-  FileText,
-  DollarSign,
-  Activity,
-} from "lucide-react";
+import { Users, Megaphone, FileText, DollarSign, Activity } from "lucide-react";
 
 import {
   ActivityFeed,
@@ -15,59 +9,59 @@ import {
   RecentFarmersTable,
   StatusCard,
 } from "../../components";
+import useFarmer from "../../hooks/useFarmer";
+import useBlogs from "../../hooks/useBlogs";
+import useAds from "../../hooks/useAds";
 
 const Dashboard = () => {
   // Backend se aayega
   const [stats, setStats] = useState([]);
   const [recentFarmers, setRecentFarmers] = useState([]);
+  const { getFarmers } = useFarmer();
+  const { getBlogs } = useBlogs();
+  const { getAds } = useAds();
 
   useEffect(() => {
     // Mock API fetch for stats
     const fetchStats = async () => {
-      // Replace this with your real API call
-      const data = [
-        {
-          title: "Total Farmers",
-          value: "2,845",
-          icon: Users,
-          gradient: "from-primary to-accent",
-        },
-        {
-          title: "Active ADS",
-          value: "142",
-          icon: Megaphone,
-          gradient: "from-info to-blue-400",
-        },
-        {
-          title: "Total Blogs",
-          value: "86",
-          icon: FileText,
-          gradient: "from-warning to-amber-400",
-        },
-        {
-          title: "Revenue",
-          value: "$84,230",
-          icon: DollarSign,
-          gradient: "from-destructive to-rose-400",
-        },
-      ];
-      setStats(data);
-    };
+      try {
+        const [farmerData, blogData, adsData] = await Promise.all([
+          getFarmers(),
+          getBlogs(),
+          getAds(),
+        ]);
 
-    // Mock API fetch for recent farmers
-    const fetchRecentFarmers = async () => {
-      // Replace this with your real API call
-      const data = [
-        { avatar: "AK", name: "Ahmad Khan", email: "ahmad@email.com", city: "Lahore", status: "Active", joined: "Jan 15, 2024" },
-        { avatar: "SA", name: "Sara Ali", email: "sara@email.com", city: "Faisalabad", status: "Active", joined: "Feb 20, 2024" },
-        { avatar: "BA", name: "Bilal Ahmed", email: "bilal@email.com", city: "Multan", status: "Blocked", joined: "Mar 10, 2024" },
-        { avatar: "FN", name: "Fatima Noor", email: "fatima@email.com", city: "Karachi", status: "Active", joined: "Apr 5, 2024" },
-      ];
-      setRecentFarmers(data);
+        setRecentFarmers(
+          [...farmerData]
+            .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+            .slice(0, 4),
+        );
+        setStats([
+          {
+            title: "Total Farmers",
+            value: farmerData.length,
+            icon: Users,
+            gradient: "from-primary to-accent",
+          },
+          {
+            title: "Active ADS",
+            value: adsData.length,
+            icon: Megaphone,
+            gradient: "from-info to-blue-400",
+          },
+          {
+            title: "Total Blogs",
+            value: blogData.length,
+            icon: FileText,
+            gradient: "from-warning to-amber-400",
+          },
+        ]);
+      } catch (err) {
+        console.error(err);
+      }
     };
 
     fetchStats();
-    fetchRecentFarmers();
   }, []);
 
   return (
@@ -90,32 +84,25 @@ const Dashboard = () => {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 gap-5 xl:grid-cols-3">
-        <CityChart />
-        <CropDistributionChart />
-      </div>
+      <CityChart />
 
-      <div className="grid grid-cols-1 gap-5 xl:grid-cols-3">
-        <div className="col-span-1 xl:col-span-2 rounded-2xl border border-border bg-card">
-          <div className="flex items-center justify-between border-b border-border p-5">
-            <div>
-              <h2 className="text-lg font-bold text-foreground">
-                Recent Farmers
-              </h2>
-              <p className="text-sm text-muted-foreground">
-                Latest registrations from mobile app
-              </p>
-            </div>
-            <Activity className="h-5 w-5 text-muted-foreground" />
+      <div className="rounded-2xl border border-border bg-card">
+        <div className="flex items-center justify-between border-b border-border p-5">
+          <div>
+            <h2 className="text-lg font-bold text-foreground">
+              Recent Farmers
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              Latest registrations from mobile app
+            </p>
           </div>
-
-          <RecentFarmersTable data={recentFarmers}/>
+          <Activity className="h-5 w-5 text-muted-foreground" />
         </div>
-        <ActivityFeed />
+
+        <RecentFarmersTable data={recentFarmers} />
       </div>
     </div>
   );
 };
 
 export default Dashboard;
-

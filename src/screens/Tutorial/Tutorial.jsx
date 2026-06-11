@@ -8,6 +8,7 @@ import {
   EmptyState,
   Searchbar,
   BlogTable,
+  TutorialTable,
 } from "../../components";
 
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -202,7 +203,7 @@ const Tutorial = () => {
           setDeleteConfirm={setDeleteConfirm}
         />
       ) : (
-        <BlogTable
+        <TutorialTable
           blogs={filteredTutorials}
           openEdit={openEdit}
           handleDelete={handleDelete}

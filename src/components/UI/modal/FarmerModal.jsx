@@ -6,7 +6,7 @@ const FarmerModal = ({ open, onClose, farmer }) => {
 
     return (
         <>
-            <div className="fixed inset-0 z-50 bg-foreground/40 backdrop-blur-sm cursor-pointer" onClick={onClose} />
+            <div className="fixed top-0 left-0 z-50 w-full h-screen bg-black/60 backdrop-blur-sm" onClick={onClose} />
             <div className="fixed left-1/2 top-1/2 z-50 w-full max-w-lg -translate-x-1/2 -translate-y-1/2 animate-scale-in overflow-hidden rounded-2xl border border-border bg-card shadow-2xl">
                 <div className="relative h-32 gradient-primary">
                     <div className="absolute inset-0 opacity-20" style={{ backgroundImage: "radial-gradient(circle at 30% 50%, white 0%, transparent 60%)" }} />

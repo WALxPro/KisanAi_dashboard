@@ -24,6 +24,7 @@ import BlogCard from "./UI/cards/BlogCard";
 import BlogTable from "./UI/table/BlogTable";
 import TutorialCard from "./UI/cards/TutorialCard";
 import TutorialModal from "./UI/modal/TutorialModal";
+import TutorialTable from "./UI/table/TutorialTable";
 export {
   DashboardLayout,
   InputField,
@@ -50,5 +51,6 @@ export {
   BlogCard,
   BlogTable,
   TutorialCard,
-  TutorialModal
+  TutorialModal,
+  TutorialTable
 };
