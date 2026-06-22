@@ -4,14 +4,14 @@ import Button from "./UI/Button";
 import SocailButton from "./UI/SocailButton";
 import ImageUpload from "./UI/ImageUpload";
 import LoaderBtn from "./UI/LoaderBtn";
-import NavItem from "./UI/NavItem";
+// import NavItem from "./UI/NavItem";
 import ConfirmModal from "./UI/ConfirmModal";
 import DashboardText from "./UI/DashboardText";
 import StatusCard from "./UI/StatusCard";
 import CityChart from "./UI/CityChart";
 import CropDistributionChart from "./UI/CropDistributionChart";
 import ActivityFeed from "./UI/ActivityFeed";
-import RecentFarmersTable from "./UI/RecentFarmersTable ";
+import RecentFarmersTable from "./UI/RecentFarmersTable";
 import Searchbar from "./UI/Searchbar";
 import OTPModal from "./UI/OtpModal";
 import ContentLoader from "./UI/Contentloader";
@@ -32,7 +32,7 @@ export {
   SocailButton,
   ImageUpload,
   LoaderBtn,
-  Navitem,
+  // NavItem,
   ConfirmModal,
   DashboardText,
   StatusCard,

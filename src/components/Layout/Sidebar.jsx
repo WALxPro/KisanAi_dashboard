@@ -10,7 +10,7 @@ import {
   Menu,
   X,
 } from "lucide-react";
-import NavItem from "../UI/Navitem";
+import NavItem from "../UI/NavItem";
 
 const navItems = [
   { title: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
