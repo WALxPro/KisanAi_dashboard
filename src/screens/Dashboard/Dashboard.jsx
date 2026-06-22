@@ -84,8 +84,9 @@ const Dashboard = () => {
         ))}
       </div>
 
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4 ">
       <CityChart />
-
+        </div>
       <div className="rounded-2xl border border-border bg-card">
         <div className="flex items-center justify-between border-b border-border p-5">
           <div>

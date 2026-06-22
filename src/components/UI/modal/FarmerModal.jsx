@@ -45,17 +45,10 @@ const FarmerModal = ({ open, onClose, farmer }) => {
                         </div>
                         <div className="flex items-center gap-3 rounded-xl border border-border/50 bg-secondary/30 p-3.5 transition-colors hover:bg-secondary/50">
                             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-warning/10"><MapPin className="h-4 w-4 text-warning" /></div>
-                            <div><p className="text-[11px] uppercase tracking-wider text-muted-foreground">Location</p><p className="text-sm font-medium text-foreground">{farmer.cropDetail?.city}</p></div>
+                            <div><p className="text-[11px] uppercase tracking-wider text-muted-foreground">Location</p><p className="text-sm font-medium text-foreground">{farmer.city}</p></div>
                         </div>
 
-                        <div className="flex items-center gap-3 rounded-xl border border-border/50 bg-secondary/30 p-3.5 transition-colors hover:bg-secondary/50">
-                            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-success"><Droplets className="h-4 w-4 text-white" /></div>
-                            <div><p className="text-[11px] uppercase tracking-wider text-muted-foreground">Irrigation Type</p><p className="text-sm font-medium text-foreground">{farmer.cropDetail?.irrigationType}</p></div>
-                        </div>
-                        <div className="flex items-center gap-3 rounded-xl border border-border/50 bg-secondary/30 p-3.5 transition-colors hover:bg-secondary/50">
-                            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-info/20"><Cloudy className="h-4 w-4 text-info" /></div>
-                            <div><p className="text-[11px] uppercase tracking-wider text-muted-foreground">Season</p><p className="text-sm font-medium text-foreground">{farmer.cropDetail?.season}</p></div>
-                        </div>
+                        
                         <div className="flex items-center gap-3 rounded-xl border border-border/50 bg-secondary/30 p-3.5 transition-colors hover:bg-secondary/50">
                             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10"><Calendar className="h-4 w-4 text-primary" /></div>
                             <div><p className="text-[11px] uppercase tracking-wider text-muted-foreground">Joined</p><p className="text-sm font-medium text-foreground">{new Date(farmer.createdAt).toLocaleDateString()}</p></div>
