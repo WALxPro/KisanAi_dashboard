@@ -4,7 +4,6 @@ import Button from "./UI/Button";
 import SocailButton from "./UI/SocailButton";
 import ImageUpload from "./UI/ImageUpload";
 import LoaderBtn from "./UI/LoaderBtn";
-// import NavItem from "./UI/NavItem";
 import ConfirmModal from "./UI/ConfirmModal";
 import DashboardText from "./UI/DashboardText";
 import StatusCard from "./UI/StatusCard";
@@ -32,7 +31,6 @@ export {
   SocailButton,
   ImageUpload,
   LoaderBtn,
-  // NavItem,
   ConfirmModal,
   DashboardText,
   StatusCard,
