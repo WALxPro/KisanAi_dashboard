@@ -4,7 +4,7 @@ import Button from "./UI/Button";
 import SocailButton from "./UI/SocailButton";
 import ImageUpload from "./UI/ImageUpload";
 import LoaderBtn from "./UI/LoaderBtn";
-import Navitem from "./UI/Navitem";
+import NavItem from "./UI/NavItem";
 import ConfirmModal from "./UI/ConfirmModal";
 import DashboardText from "./UI/DashboardText";
 import StatusCard from "./UI/StatusCard";
